@@ -1,7 +1,6 @@
 <?php
 class Markread_Plus extends Plugin {
 	private $host;
-	private $debug = false;
 	function about() {
 		return array(1.0,
 			"Enhanced mark read with more control/options",
@@ -24,8 +23,6 @@ class Markread_Plus extends Plugin {
 	}
 
 	function setmarkenhanced(){
-		if (class_exists("Logger") && $this->debug)
-			Logger::get()->log_error(2, $_REQUEST["feed"],"markread_plus",28, "");
 		$active_feed_id = sprintf("%d", $_REQUEST["feed"]);
 		$is_cat = ($_REQUEST["is_cat"] != "false");
 
@@ -78,8 +75,6 @@ function catchupMarkehanced()
 	}
 	
 
-	if (class_exists("Logger") && $this->debug)
-		Logger::get()->log_error(2, $feed . ":" .$ftitle . " - " . $_REQUEST['period']. ':' . $_REQUEST['duration'],"markread_plus",75, "");
 	switch( $_REQUEST["period"]){
 		case "h":
 			$per = (DB_TYPE == "pgsql")? "hour" : "HOUR";
@@ -95,15 +90,13 @@ function catchupMarkehanced()
 			break;
 	}
 
-	$date_qpart = (DB_TYPE == "pgsql")? "date_entered < NOW() - INTERVAL ' " :
+	$date_qpart = (DB_TYPE == "pgsql")? " date_entered < NOW() - INTERVAL '" :
 			"date_entered < DATE_SUB(NOW(), INTERVAL ";
 	$date_qpart .= $_REQUEST["duration"] . " " . $per;
 	if(DB_TYPE == "pgsql")
 		$date_qpart .= "' ";
 	else
 		$date_qpart .= ") ";
-	if (class_exists("Logger") && $this->debug)
-		Logger::get()->log_error(2, $date_qpart,"markread_plus",106, "");
 		
 
 	if (is_numeric($feed)) {
@@ -132,9 +125,9 @@ function catchupMarkehanced()
 			} else if ($feed == -2) {
 
 				db_query("UPDATE ttrss_user_entries
-					SET unread = false,last_read = NOW() WHERE (SELECT COUNT(*)
-						FROM ttrss_user_labels2 WHERE article_id = ref_id) > 0
-						AND unread = true AND $date_qpart AND owner_uid = $owner_uid");
+							SET unread = false,last_read = NOW() WHERE (SELECT COUNT(*)
+								FROM ttrss_user_labels2, ttrss_entries WHERE article_id = ref_id AND id = ref_id AND $date_qpart) > 0
+								AND unread = true AND owner_uid = $owner_uid");
 			}
 
 		} else if ($feed > 0) {

@@ -12,6 +12,8 @@ function enh_mark_read() {
 		style: "width: 400px",
 		execute: function() {
 			if (this.validate()) {
+				var feed = getActiveFeedId();
+				var is_cat = activeFeedIsCat();
 				var period = document.getElementsByName('enhmarkPeriod')[0].value;
 				var duration = document.getElementsByName('enhmarkDuration')[0].value;
 				console.log(period + ':' + duration);
