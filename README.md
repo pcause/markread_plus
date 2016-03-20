@@ -3,7 +3,8 @@ markread_plus
 
 Mark read / mark unread  with enganced timeframes and search expression matching
 
-** This is alpha code.  I have tested on the latest version of tt-rss and with postgresql.  I have never tested on mysql but think it will work.**
+**This is alpha code.  I have tested on the latest version of tt-rss and with postgresql.  I have never tested on mysql but think it will work.**
+
 **__USE AT YOUR OWN RISK__**
 
 To use: create a directory in your plugins directory and put the files
