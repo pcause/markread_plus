@@ -8,7 +8,7 @@ function enh_mark_read() {
 		dijit.byId("enhmarkDlg").destroyRecursive();
 	var dialog = new dijit.Dialog({
 		id: "enhmarkDlg",
-		title: __("Enhanced Mark Read"),
+		title: __("Mark Read/Unread"),
 		style: "width: 400px",
 		execute: function() {
 			if (this.validate()) {
@@ -16,8 +16,10 @@ function enh_mark_read() {
 				var is_cat = activeFeedIsCat();
 				var period = document.getElementsByName('enhmarkPeriod')[0].value;
 				var duration = document.getElementsByName('enhmarkDuration')[0].value;
-				console.log(period + ':' + duration);
-				catchup_enhmark(period,duration, feed, is_cat);
+				var marktype = document.getElementsByName('enhmarkType')[0].value;
+				var markexpr = document.getElementsByName('enhmarkexpr')[0].value;
+				console.log(period + ':' + duration + ':type=' + marktype);
+				catchup_enhmark(period,duration, feed, is_cat,marktype, markexpr);
 				this.hide();
 			}
 		},
@@ -26,7 +28,7 @@ function enh_mark_read() {
 	dialog.show();
 }
 
-function catchup_enhmark(period, duration, feed, is_cat)
+function catchup_enhmark(period, duration, feed, is_cat,marktype, markexpr)
 {
 	
 	if (is_cat == undefined) is_cat = false;
@@ -34,10 +36,12 @@ function catchup_enhmark(period, duration, feed, is_cat)
 	var fn = getFeedName(feed, is_cat);
 	console.log('fn is ' + fn);
 	var str = ""+ fn;
+	markexpr = (markexpr != null && markexpr != "")? "&markexpr=" + encodeURI(markexpr) : "";
 	var catchup_query = "&period=" + period + "&duration=" + duration + 
-		"&feed_id=" + feed + "&is_cat=" + is_cat;
+		"&feed_id=" + feed + "&is_cat=" + is_cat + "&marktype=" + marktype + markexpr;
+			
 
-	console.log('query : ' + catchup_query);
+	console.log('****** query : ' + catchup_query);
 	notify_progress("Loading, please wait...", true);
 
 	new Ajax.Request("backend.php?op=pluginhandler&plugin=markread_plus&method=catchupMarkehanced",
